@@ -1,26 +1,26 @@
-# Maintainer: Mattias Andrée <`base64 -d`(bWFhbmRyZWUK)@member.fsf.org>
+# Maintainer: Parthiv Vora <psvora94@gmail.com>
 
-pkgname=wikiquote-fortune
-pkgver=1.5
+pkgname=wikiquote-movie-fortune
+pkgver=2.0
 pkgrel=1
-pkgdesc="Generate fortune cookies from Wikiquote"
+pkgdesc="Generate fortune cookies from Wikiquote for movies"
 arch=('any')
-url="https://github.com/maandree/wikiquote-fortune"
+url="https://github.com/therealpsv/wikiquote-movie-fortune"
 license=('GPL3')
 depends=('python' 'wget')
 makedepends=('coreutils' 'make' 'texinfo')
-source=(https://github.com/maandree/wikiquote-fortune/archive/${pkgver}.tar.gz)
+source=(https://github.com/therealpsv/wikiquote-movie-fortune/archive/${pkgver}.tar.gz)
 sha256sums=(8bff426c4c1e5bb2a4254c87bdd74e037ba8944124fc540d94a3174bf626e8f6)
 
 
 build() {
-  cd "${srcdir}/wikiquote-fortune-${pkgver}"
+  cd "${srcdir}/wikiquote-movie-fortune-${pkgver}"
   make
 }
 
 
 package() {
-  cd "${srcdir}/wikiquote-fortune-${pkgver}"
+  cd "${srcdir}/wikiquote-movie-fortune-${pkgver}"
   make install DESTDIR="${pkgdir}"
 }
 

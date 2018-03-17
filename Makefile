@@ -15,8 +15,8 @@ MAN1DIR = $(MANDIR)/man1
 LICENSEDIR = $(DATADIR)/licenses
 
 
-PKGNAME = wikiquote-fortune
-COMMAND = wikiquote-fortune
+PKGNAME = wikiquote-movie-fortune
+COMMAND = wikiquote-movie-fortune
 
 
 
@@ -36,28 +36,28 @@ doc: man info pdf dvi ps
 man:
 
 .PHONY: info
-info: bin/wikiquote-fortune.info
+info: bin/wikiquote-movie-fortune.info
 bin/%.info: doc/info/%.texinfo doc/info/fdl.texinfo
 	@mkdir -p bin
 	makeinfo $<
 	mv $*.info $@
 
 .PHONY: pdf
-pdf: bin/wikiquote-fortune.pdf
+pdf: bin/wikiquote-movie-fortune.pdf
 bin/%.pdf: doc/info/%.texinfo doc/info/fdl.texinfo
 	@mkdir -p obj/pdf bin
 	cd obj/pdf ; yes X | texi2pdf ../../$<
 	mv obj/pdf/$*.pdf $@
 
 .PHONY: dvi
-dvi: bin/wikiquote-fortune.dvi
+dvi: bin/wikiquote-movie-fortune.dvi
 bin/%.dvi: doc/info/%.texinfo doc/info/fdl.texinfo
 	@mkdir -p obj/dvi bin
 	cd obj/dvi ; yes X | $(TEXI2DVI) ../../$<
 	mv obj/dvi/$*.dvi $@
 
 .PHONY: ps
-ps: bin/wikiquote-fortune.ps
+ps: bin/wikiquote-movie-fortune.ps
 bin/%.ps: doc/info/%.texinfo doc/info/fdl.texinfo
 	@mkdir -p obj/ps bin
 	cd obj/ps ; yes X | texi2pdf --ps ../../$<
@@ -77,7 +77,7 @@ install-base: install-command install-copyright
 .PHONY: install-command
 install-command:
 	install -dm755 -- "$(DESTDIR)$(BINDIR)"
-	install -m755 src/wikiquote-fortune -- "$(DESTDIR)$(BINDIR)/$(COMMAND)"
+	install -m755 src/wikiquote-movie-fortune -- "$(DESTDIR)$(BINDIR)/$(COMMAND)"
 
 .PHONY: install-copyright
 install-copyright: install-copying install-license
@@ -98,25 +98,25 @@ install-doc: install-man install-info install-pdf install-ps install-dvi
 .PHONY: install-man
 install-man:
 	install -dm755 -- "$(DESTDIR)$(MAN1DIR)"
-	install -m644 doc/man/wikiquote-fortune.1 -- "$(DESTDIR)$(MAN1DIR)/$(COMMAND).1"
+	install -m644 doc/man/wikiquote-movie-fortune.1 -- "$(DESTDIR)$(MAN1DIR)/$(COMMAND).1"
 
 .PHONY: install-info
-install-info: bin/wikiquote-fortune.info
+install-info: bin/wikiquote-movie-fortune.info
 	install -dm755 -- "$(DESTDIR)$(INFODIR)"
 	install -m644 $< -- "$(DESTDIR)$(INFODIR)/$(PKGNAME).info"
 
 .PHONY: install-pdf
-install-pdf: bin/wikiquote-fortune.pdf
+install-pdf: bin/wikiquote-movie-fortune.pdf
 	install -dm755 -- "$(DESTDIR)$(DOCDIR)"
 	install -m644 $< -- "$(DESTDIR)$(DOCDIR)/$(PKGNAME).pdf"
 
 .PHONY: install-ps
-install-ps: bin/wikiquote-fortune.ps
+install-ps: bin/wikiquote-movie-fortune.ps
 	install -dm755 -- "$(DESTDIR)$(DOCDIR)"
 	install -m644 $< -- "$(DESTDIR)$(DOCDIR)/$(PKGNAME).ps"
 
 .PHONY: install-dvi
-install-dvi: bin/wikiquote-fortune.dvi
+install-dvi: bin/wikiquote-movie-fortune.dvi
 	install -dm755 -- "$(DESTDIR)$(DOCDIR)"
 	install -m644 $< -- "$(DESTDIR)$(DOCDIR)/$(PKGNAME).dvi"
 

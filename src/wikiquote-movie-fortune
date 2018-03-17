@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- python -*-
 
-# wikiquote-fortune – Generate fortune cookies from Wikiquote
+# wikiquote-movie-fortune – Generate fortune cookies from Wikiquote for movies
 # Copyright © 2014  Mattias Andrée (maandree@member.fsf.org)
+# Copyright © 2018  Parthiv Vora (psvora94@gmail.com)
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,28 +33,54 @@ show_ = sys.argv[1].replace(' ', '_')
 show = show_.replace('_', ' ')
 dateonly = (len(sys.argv) > 2) and (sys.argv[2] == 'date-only')
 
-
 command = ['wget', 'http://en.wikiquote.org/wiki/%s' % show_, '-O', '-']
-proc = Popen(command, stdout = PIPE, stderr = sys.stderr)
+proc = Popen(command, stdout=PIPE, stderr=sys.stderr)
 wiki = proc.communicate()[0]
 if proc.poll() is None:
     proc.wait()
 if not proc.returncode == 0:
     sys.exit(1)
 
-
 if not dateonly:
+    in_contents = False
+    in_contents_h2 = False
+    past_contents = False
+    found_h2 = False
     in_body = False
     in_quote_area = False
     in_bad_area = False
     text = ''
-    
+
+
     def start_element(name, attrs):
-        global in_body, in_quote_area, in_bad_area, text
+        global in_body, in_quote_area, in_bad_area, text, in_contents, in_contents_h2, past_contents, found_h2
         if name == 'body':
             in_body = True
-        elif in_body and (name in ('h3', 'h4', 'dl', 'dd', 'hr')):
+        elif name == 'div' and "id" in attrs:
+            if attrs["id"] == 'toc':
+                in_contents = True
+                text += '\t\t\t\t\t'
+        elif in_contents and name == 'h2':
+            in_contents_h2 = True
+            in_contents = False
+            text += '\t\t\t\t\t'
+        elif in_contents_h2 and name == 'h2':
+            text += '\n'
+            past_contents = True
+            found_h2 = True
+            in_contents_h2 = False
+        elif in_body and not past_contents:
+            text += '\t\t\t\t\t'
+        elif in_body and past_contents and name == 'h2':
+            found_h2 = True
+        elif in_body and past_contents and found_h2 and name == 'span' and "id" in attrs:
+            text += '\t\t\t'
+            in_quote_area = True
+            found_h2 = False
+        elif in_body and (name in ('h3', 'h4', 'dl', 'dd', 'hr', 'li')):
             if (name not in ('h3', 'h4')) or (len(attrs) == 0):
+                if name == 'li':
+                    text += '\t\t\t\t'
                 if name == 'h3':
                     text += '\t'
                 if name == 'h4':
@@ -61,23 +88,27 @@ if not dateonly:
                 in_quote_area = True
         elif name in ('label',):
             in_bad_area = True
-        if in_quote_area and not in_bad_area:
-            if (name == 'hr') and (len(text) > 0):
+        if in_quote_area and past_contents and not in_bad_area:
+            if ((name == 'hr') and (len(text) > 0)):
                 if not text.endswith('\n'):
                     text += '\n'
                 text += '\t-----\n'
-    
+
+
     def end_element(name):
         global in_body, in_quote_area, in_bad_area, text
         if name == 'body':
             in_body = False
-        elif in_body and (name in ('h3', 'h4', 'dl', 'dd', 'hr')):
+        elif in_body and (name in ('h2', 'h3', 'h4', 'dl', 'dd', 'hr', 'li', 'span')):
             in_quote_area = False
-            if name in ('dd', 'h3', 'h4'):
+            if name in ('dd', 'h2', 'h3', 'h4', 'li', 'span'):
                 text += '\n'
-        elif name in ('label',):
+                if name == 'li' and past_contents:
+                    text += '\t-----\n'
+        elif name in ('label'):
             in_bad_area = False
-    
+
+
     def char_data(data):
         global text
         if in_quote_area and not in_bad_area:
@@ -86,44 +117,64 @@ if not dateonly:
                 data = data.replace('  ', ' ')
             if not data == '':
                 text += data
-    
+
+
     parser = pyexpat.ParserCreate()
     parser.StartElementHandler = start_element
     parser.EndElementHandler = end_element
     parser.CharacterDataHandler = char_data
-    
+
     parser.Parse(wiki, 1)
-    
+
     text = text.replace('[edit]', '')
     text = text.rstrip(' \n\t')
     lines = text.split('\n')
     text = ''
-    episode, part = None, None
+    episode, part, speaker = None, None, None
+    use_speaker = False
     lines_added = 0
     for line in lines:
-        if line.startswith('\t\t'):
+
+        tab_count = len(line) - len(line.lstrip('\t'))
+        if tab_count == 5 or len(line.strip()) == 0:
+            continue
+        elif tab_count == 3:
+            speaker = line[3:]
+            if speaker == 'Cast':
+                break
+        elif tab_count == 2:
             part = line[2:]
-        elif line.startswith('\t'):
+        elif tab_count == 1:
             if lines_added > 0:
                 lines_added = 0
                 episode_ = episode if part is None else ('%s - %s' % (episode, part))
-                text += '\n\t-- %s - %s\n%%\n' % (show, episode_)
+                show = show if episode_ is None else ('%s - %s' % (show, episode_))
+                if speaker is None or not use_speaker:
+                    text += '\n\t-- %s\n%%\n' % (show)
+                else:
+                    text += '\n\t-- %s, %s\n%%\n' % (speaker, show)
             if not line == '\t-----':
                 episode, part = line[1:], None
+            use_speaker = False
         else:
+            if tab_count == 4:
+                use_speaker = True
+                line = line[4:]
             lines_added += 1
             text += line + '\n'
-    
+
     if lines_added > 0:
         episode_ = episode if part is None else ('%s - %s' % (episode, part))
-        text += '\n\t-- %s - %s\n%%\n' % (show, episode_)
-    
-    with open('quotes', 'wb') as file:
+        show = show if episode_ is None else ('%s - %s' % (show, episode_))
+        text += '\n\t-- %s\n%%\n' % (show)
+
+    with open(show_, 'wb') as file:
         file.write(text.encode('utf-8'))
         file.flush()
 
-
 history_url = None
+
+
 def start_element(name, attrs):
     global history_url
     if name == 'a':
@@ -136,26 +187,26 @@ def start_element(name, attrs):
                 history_url = 'http:' if val.startswith('//') else 'http://en.wikiquote.org'
                 history_url += val
 
+
 parser = pyexpat.ParserCreate()
 parser.StartElementHandler = start_element
 
 parser.Parse(wiki, 1)
 
-
 if history_url is None:
     sys.exit(1)
 
-
 command = ['wget', history_url, '-O', '-']
-proc = Popen(command, stdout = PIPE, stderr = sys.stderr)
+proc = Popen(command, stdout=PIPE, stderr=sys.stderr)
 history = proc.communicate()[0]
 if proc.poll() is None:
     proc.wait()
 if not proc.returncode == 0:
     sys.exit(1)
 
-
 on_mw_changeslist_date = False
+
+
 def start_element(name, attrs):
     global on_mw_changeslist_date
     on_mw_changeslist_date = False
@@ -163,15 +214,20 @@ def start_element(name, attrs):
         if ('class' in attrs) and (attrs['class'] == 'mw-changeslist-date'):
             on_mw_changeslist_date = True
 
+
 def end_element(name):
     global on_mw_changeslist_date
     on_mw_changeslist_date = False
 
+
 last_modified = None
+
+
 def char_data(data):
     global last_modified
     if on_mw_changeslist_date and (last_modified is None):
         last_modified = data
+
 
 parser = pyexpat.ParserCreate()
 parser.StartElementHandler = start_element
@@ -180,28 +236,25 @@ parser.CharacterDataHandler = char_data
 
 parser.Parse(history, 1)
 
-
 if last_modified is None:
     sys.exit(1)
-
 
 (time, date) = last_modified.split(', ')
 (day, month, year) = date.split(' ')
 
-
-months = { 'January'   : '01'
-         , 'February'  : '02'
-         , 'March'     : '03'
-         , 'April'     : '04'
-         , 'May'       : '05'
-         , 'June'      : '06'
-         , 'July'      : '07'
-         , 'August'    : '08'
-         , 'September' : '09'
-         , 'October'   : '10'
-         , 'November'  : '11'
-         , 'December'  : '12'
-         }
+months = {'January': '01'
+    , 'February': '02'
+    , 'March': '03'
+    , 'April': '04'
+    , 'May': '05'
+    , 'June': '06'
+    , 'July': '07'
+    , 'August': '08'
+    , 'September': '09'
+    , 'October': '10'
+    , 'November': '11'
+    , 'December': '12'
+          }
 
 day = ('0' + day)[-2:]
 month = months[month]
@@ -214,4 +267,3 @@ version = date + time
 with open('version', 'wb') as file:
     file.write((version + '\n').encode('utf-8'))
     file.flush()
-

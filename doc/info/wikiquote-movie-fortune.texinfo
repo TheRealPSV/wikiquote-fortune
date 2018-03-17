@@ -1,8 +1,8 @@
 \input texinfo   @c -*-texinfo-*-
 
 @c %**start of header
-@setfilename wikiquote-fortune.info
-@settitle wikiquote-fortune
+@setfilename wikiquote-movie-fortune.info
+@settitle wikiquote-movie-fortune
 @afourpaper
 @documentencoding UTF-8
 @documentlanguage en
@@ -12,12 +12,12 @@
 
 @dircategory Automation
 @direntry
-* wikiquote-fortune: (wikiquote-fortune).  Generate fortune cookies from Wikiquote
+* wikiquote-movie-fortune: (wikiquote-movie-fortune).  Generate fortune cookies from Wikiquote for movies
 @end direntry
 
 
 @copying
-Copyright @copyright{} 2015 Mattias Andrée
+Copyright @copyright{} 2015 Mattias Andrée, 2018 Parthiv Vora
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -31,14 +31,14 @@ Texts. A copy of the license is included in the section entitled
 
 @ifnottex
 @node Top
-@top wikiquote-fortune -- Generate fortune cookies from Wikiquote
+@top wikiquote-movie-fortune -- Generate fortune cookies from Wikiquote for movies
 @insertcopying
 @end ifnottex
 
 @titlepage
-@title wikiquote-fortune
-@subtitle Generate fortune cookies from Wikiquote
-@author by Mattias Andrée (maandree)
+@title wikiquote-movie-fortune
+@subtitle Generate fortune cookies from Wikiquote for movies
+@author by Mattias Andrée (maandree), Parthiv Vora (therealpsv)
 
 @page
 @vskip 0pt plus 1filll
@@ -51,8 +51,8 @@ Texts. A copy of the license is included in the section entitled
 
 
 @menu
-* Overview::                        Brief overview of @command{wikiquote-fortune}.
-* Invoking::                        Invocation of @command{wikiquote-fortune}.
+* Overview::                        Brief overview of @command{wikiquote-movie-fortune}.
+* Invoking::                        Invocation of @command{wikiquote-movie-fortune}.
 * GNU Free Documentation License::  Copying and sharing this manual.
 @end menu
 
@@ -61,15 +61,15 @@ Texts. A copy of the license is included in the section entitled
 @node Overview
 @chapter Overview
 
-@command{wikiquote-fortune} generate @command{fortune} cookies
-from Wikiquote articles.
+@command{wikiquote-movie-fortune} generate @command{fortune} cookies
+from Wikiquote articles for movies.
 
-If you use wikiquote-fortune to create a @command{fortune} cookie
+If you use wikiquote-movie-fortune to create a @command{fortune} cookie
 package please consider submitting it to wikiquote-fortune-collection
 at @url{https://github.com/maandree/wikiquote-fortune-collection}.
-Doing so means that I will (unless you perfer to it yourself)
+Doing so means that I can (unless you prefer to it yourself)
 maintain it for the Arch Linux User Repository and will do my
-best to make sure @command{wikiquote-fortune} will work with new
+best to make sure @command{wikiquote-movie-fortune} will work with new
 versions of the Wikiquote page.
 
 
@@ -77,10 +77,10 @@ versions of the Wikiquote page.
 @node Invoking
 @chapter Invoking
 
-The first argument @command{wikiquote-fortune} takes is the
-name of the show for which you want @command{fortune} cookie
-generated. The file @file{./quotes} will be generated with a
-the quotes, from the articlee, in a format that can be converted
+The first argument @command{wikiquote-movie-fortune} takes is the
+name of the movie for which you want @command{fortune} cookie
+generated. The file @file{./MOVIE_NAME} will be generated with a
+the quotes, from the article, in a format that can be converted
 by @command{strfile} to fit @command{fortune-mod}.
 
 The file @file{./version} will also be generated. It will
@@ -88,7 +88,7 @@ contain the the date and time the source was last edited, the
 format @code{yymmddHHMM}.
 
 If the second argument is @code{date-only} (the only valid
-value for the second argument,) the file @file{./quotes} will
+value for the second argument,) the file @file{./MOVIE_NAME} will
 not be generated. Only @file{./version} will be generated in
 this case. This can be used to figure out if it is worth
 generating @file{./quotes}. This is useful you have a large
