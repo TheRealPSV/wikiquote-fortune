@@ -140,7 +140,7 @@ if not dateonly:
             continue
         elif tab_count == 3:
             speaker = line[3:]
-            if speaker == 'Cast':
+            if speaker.lower() in ('cast', 'main cast'):
                 break
         elif tab_count == 2:
             part = line[2:]
