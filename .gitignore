@@ -12,4 +12,5 @@ _/
 /quotes
 /version
 *.info
+.idea/
 
