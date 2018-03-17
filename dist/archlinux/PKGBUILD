@@ -9,18 +9,17 @@ url="https://github.com/therealpsv/wikiquote-movie-fortune"
 license=('GPL3')
 depends=('python' 'wget')
 makedepends=('coreutils' 'make' 'texinfo')
-source=(https://github.com/therealpsv/wikiquote-movie-fortune/archive/${pkgver}.tar.gz)
-sha256sums=(8bff426c4c1e5bb2a4254c87bdd74e037ba8944124fc540d94a3174bf626e8f6)
+source=(git://github.com/TheRealPSV/wikiquote-movie-fortune.git)
+sha256sums=('SKIP')
 
 
 build() {
-  cd "${srcdir}/wikiquote-movie-fortune-${pkgver}"
+  cd "${srcdir}/wikiquote-movie-fortune"
   make
 }
 
 
 package() {
-  cd "${srcdir}/wikiquote-movie-fortune-${pkgver}"
+  cd "${srcdir}/wikiquote-movie-fortune"
   make install DESTDIR="${pkgdir}"
 }
-
