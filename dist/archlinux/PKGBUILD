@@ -15,12 +15,12 @@ sha256sums=('c2f83ada0d874f6e314e3aa916a380a75115ec71d775f80657fcd8edfef056a7')
 
 
 build() {
-  cd "${srcdir}/wikiquote-movie-fortune-${pkgver}"
+  cd "${srcdir}"
   make
 }
 
 
 package() {
-  cd "${srcdir}/wikiquote-movie-fortune-${pkgver}"
+  cd "${srcdir}"
   make install DESTDIR="${pkgdir}"
 }
