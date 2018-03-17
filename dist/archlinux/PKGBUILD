@@ -10,8 +10,8 @@ url="https://github.com/therealpsv/wikiquote-movie-fortune"
 license=('GPL3')
 depends=('python' 'wget')
 makedepends=('coreutils' 'make' 'texinfo')
-source=(https://github.com/TheRealPSV/wikiquote-movie-fortune/archive/${pkgver}.tar.gz)
-sha256sums=('5a6fe9041d169a3646be3ac2d8dc46b928ba411e81de8cdcaf6332e684dfeedf')
+source=(https://github.com/TheRealPSV/wikiquote-movie-fortune/releases/download/${pkgver}/${pkgver}.tar.gz)
+sha256sums=('c2f83ada0d874f6e314e3aa916a380a75115ec71d775f80657fcd8edfef056a7')
 
 
 build() {
