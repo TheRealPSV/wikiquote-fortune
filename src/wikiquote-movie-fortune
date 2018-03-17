@@ -76,7 +76,6 @@ if not dateonly:
         elif in_body and past_contents and found_h2 and name == 'span' and "id" in attrs:
             text += '\t\t\t'
             in_quote_area = True
-            found_h2 = False
         elif in_body and (name in ('h3', 'h4', 'dl', 'dd', 'hr', 'li')):
             if (name not in ('h3', 'h4')) or (len(attrs) == 0):
                 if name == 'li':
@@ -96,13 +95,15 @@ if not dateonly:
 
 
     def end_element(name):
-        global in_body, in_quote_area, in_bad_area, text
+        global in_body, in_quote_area, in_bad_area, text, found_h2
         if name == 'body':
             in_body = False
         elif in_body and (name in ('h2', 'h3', 'h4', 'dl', 'dd', 'hr', 'li', 'span')):
             in_quote_area = False
             if name in ('dd', 'h2', 'h3', 'h4', 'li', 'span'):
                 text += '\n'
+                if name == 'h2':
+                    found_h2 = False
                 if name == 'li' and past_contents:
                     text += '\t-----\n'
         elif name in ('label'):
@@ -140,7 +141,7 @@ if not dateonly:
             continue
         elif tab_count == 3:
             speaker = line[3:]
-            if speaker.lower() in ('cast', 'main cast'):
+            if speaker.lower().strip() in ('cast', 'main cast'):
                 break
         elif tab_count == 2:
             part = line[2:]

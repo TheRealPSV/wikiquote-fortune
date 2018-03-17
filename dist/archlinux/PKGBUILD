@@ -1,4 +1,5 @@
-# Maintainer: Parthiv Vora <psvora94@gmail.com>
+# Maintainer: Parthiv Vora <psvora94 at gmail dot com>
+# Contributor: Mattias Andrée <maandree at member dot fsf dot org>
 
 pkgname=wikiquote-movie-fortune
 pkgver=2.0
