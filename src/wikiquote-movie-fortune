@@ -24,6 +24,7 @@
 
 import sys
 import pyexpat
+import re
 from subprocess import Popen, PIPE
 
 # All modules are included in Python
@@ -169,7 +170,7 @@ if not dateonly:
         show = show if episode_ is None else ('%s - %s' % (show, episode_))
         text += '\n\t-- %s\n%%\n' % (show)
 
-    with open(show_, 'wb') as file:
+    with open(re.sub('[^\w\-_\. ]', '_', show_), 'wb') as file:
         file.write(text.encode('utf-8'))
         file.flush()
 
